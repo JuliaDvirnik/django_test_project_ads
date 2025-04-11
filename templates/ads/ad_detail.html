@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}{{ ad.title }}{% endblock %}
+
+{% block content %}
+  <h2>{{ ad.title }}</h2>
+  <p><strong>Категория:</strong> {{ ad.get_category_display }}</p>
+  <p><strong>Состояние:</strong> {{ ad.get_condition_display }}</p>
+  <p><strong>Описание:</strong> {{ ad.description }}</p>
+  {% if ad.image_url %}
+    <p><img src="{{ ad.image_url }}" alt="Изображение" style="max-width:400px;"></p>
+  {% endif %}
+  <p><em>Опубликовано: {{ ad.created_at }}</em></p>
+{% endblock %}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Объявления{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.min.css">
+</head>
+
+<body>
+    <header {% if request.resolver_match.url_name == 'index' or request.resolver_match.url_name == 'login' or request.resolver_match.url_name == 'register' %}style="display: none;"{% endif %}>
+      <h1><a href="/">Объявления</a></h1>
+      {% if user.is_authenticated %}
+        <p>Привет, {{ user.username }} | <a href="{% url 'logout' %}">Выйти</a></p>
+      {% else %}
+        <a href="{% url 'login' %}">Войти</a>
+      {% endif %}
+      <hr>
+     </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
