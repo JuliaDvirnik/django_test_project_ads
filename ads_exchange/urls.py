@@ -16,11 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path
-from ads.views import create_ad, ad_detail, register, index
+from ads.views import create_ad, ad_detail, register, ad_list
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', index, name='index'),
+    path('', ad_list, name='index'),
     path('ads/create/', create_ad, name='create_ad'),
     path('ads/<int:pk>/', ad_detail, name='ad_detail'),
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
