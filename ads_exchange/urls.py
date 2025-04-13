@@ -16,16 +16,20 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path
-from ads.views import create_ad, ad_detail, register, ad_list
+from ads.views import create_ad, ad_detail, register, ad_list, delete_ad, edit_ad, create_exchange, exchange_detail
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', ad_list, name='index'),
     path('ads/create/', create_ad, name='create_ad'),
     path('ads/<int:pk>/', ad_detail, name='ad_detail'),
+    path('ads/<int:pk>/delete/', delete_ad, name='delete_ad'),
+    path('ads/<int:pk>/edit/', edit_ad, name='edit_ad'),
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
-    path('register/', register, name='register')
+    path('register/', register, name='register'),
+    path('exchange/', create_exchange, name='create_exchange'),
+    path('exchange/<int:pk>/', exchange_detail, name='exchange_detail'),
 ]
 
 # спросить должен ли быть свой файл urls в app

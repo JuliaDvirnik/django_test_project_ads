@@ -4,11 +4,24 @@
 
 {% block content %}
   <h2>{{ ad.title }}</h2>
+    
   <p><strong>Категория:</strong> {{ ad.get_category_display }}</p>
   <p><strong>Состояние:</strong> {{ ad.get_condition_display }}</p>
   <p><strong>Описание:</strong> {{ ad.description }}</p>
+    
   {% if ad.image_url %}
     <p><img src="{{ ad.image_url }}" alt="Изображение" style="max-width:400px;"></p>
   {% endif %}
+    
   <p><em>Опубликовано: {{ ad.created_at }}</em></p>
+    
+  {% if request.user == ad.user %}  
+    <p>
+      <a href="{% url 'edit_ad' ad.pk %}">✏️ Редактировать</a> |
+      <a href="{% url 'delete_ad' ad.pk %}">🗑 Удалить</a>
+    </p>
+    <p><a href="{% url 'create_exchange' %}?sender={{ ad.pk }}">📦 Хочу обменять</a></p>
+  {% elif request.user.is_authenticated %}  
+    <p><a href="{% url 'create_exchange' %}?receiver={{ ad.pk }}">🔁 Предложить обмен</a></p>    
+  {% endif %}
 {% endblock %}

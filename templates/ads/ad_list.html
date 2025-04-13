@@ -7,6 +7,7 @@
 
   {% if user.is_authenticated %}
     <p><a href="{% url 'create_ad' %}">➕ Подать объявление</a></p>
+    <p><a href="{% url 'create_exchange' %}">🔁 Обменять</a></p>  
     <p><a href="{% url 'logout' %}">🔓 Выйти</a></p>
   {% else %}
     <p><a href="{% url 'login' %}">🔐 Войти</a> или <a href="{% url 'register' %}">📝 Зарегистрироваться</a></p>

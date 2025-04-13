@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Предложение обмена{% endblock %}
+
+{% block content %}
+  <h2>Предложение обмена</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    <p>
+      <label for="id_ad_sender">Выберите своё объявление:</label>
+      <select name="ad_sender" required>
+        {% for ad in user_ads %}
+          <option value="{{ ad.id }}"
+            {% if form.data.ad_sender == ad.id|stringformat:"s" or form.initial.ad_sender|stringformat:"s" == ad.id|stringformat:"s" %}
+              selected
+            {% endif %}>
+            {{ ad.title }}
+          </option>
+        {% endfor %}
+      </select>
+    </p>
+
+    <p>
+      <label for="id_ad_receiver">Выберите чужое объявление:</label>
+      <select name="ad_receiver" required>
+        {% for ad in all_ads %}
+          <option value="{{ ad.id }}"
+            {% if form.data.ad_receiver == ad.id|stringformat:"s" or form.initial.ad_receiver|stringformat:"s" == ad.id|stringformat:"s" %}
+              selected
+            {% endif %}>
+            {{ ad.title }} (владелец: {{ ad.user.username }})
+          </option>
+        {% endfor %}
+      </select>
+    </p>
+
+    <p>
+      <label for="id_comment">Комментарий:</label>
+      {{ form.comment }}
+    </p>
+
+    <button type="submit">💬 Отправить предложение</button>
+  </form>
+{% endblock %}

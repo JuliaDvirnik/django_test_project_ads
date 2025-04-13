@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Предложение обмена{% endblock %}
+
+{% block content %}
+  <h2>Предложение обмена</h2>
+
+  <p><strong>Ваше объявление:</strong>
+    <a href="{% url 'ad_detail' offer.ad_sender.pk %}">{{ offer.ad_sender.title }}</a>
+  </p>
+
+  <p><strong>Объявление получателя:</strong>
+    <a href="{% url 'ad_detail' offer.ad_receiver.pk %}">{{ offer.ad_receiver.title }}</a>
+  </p>
+
+  <p><strong>Комментарий:</strong> {{ offer.comment }}</p>
+  <p><strong>Статус:</strong> {{ offer.get_status_display }}</p>
+  <p><em>Создано: {{ offer.created_at|date:"d.m.Y H:i" }}</em></p>
+{% endblock %}
