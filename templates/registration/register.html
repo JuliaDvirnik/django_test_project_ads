@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
+     <style>
+    .errorlist {
+      color: red;
+    }
+  </style>
   <h2>Регистрация</h2>
   <form method="post">
     {% csrf_token %}

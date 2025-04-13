@@ -1,5 +1,5 @@
 from django import forms
-from .models import Ad, ExchangeOffer
+from .models import Ad, ExchangeProposal
 
 
 class AdForm(forms.ModelForm):
@@ -15,9 +15,9 @@ class AdForm(forms.ModelForm):
         }
 
 
-class ExchangeOfferForm(forms.ModelForm):
+class ExchangeProposalForm(forms.ModelForm):
     class Meta:
-        model = ExchangeOffer
+        model = ExchangeProposal
         fields = ['ad_sender', 'ad_receiver', 'comment']
         labels = {
             'ad_sender': 'Отправитель',

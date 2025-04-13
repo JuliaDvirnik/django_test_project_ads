@@ -9,7 +9,12 @@
 
 <body>
     <header {% if request.resolver_match.url_name == 'index' or request.resolver_match.url_name == 'login' or request.resolver_match.url_name == 'register' %}style="display: none;"{% endif %}>
-      <h1><a href="/">Объявления</a></h1>
+      <h1>
+          <a href="/">Объявления</a>
+          {% if user.is_authenticated %}
+            | <a href="{% url 'my_exchanges' %}">Мои обмены</a>
+          {% endif %}
+      </h1>
       {% if user.is_authenticated %}
         <p>Привет, {{ user.username }} | <a href="{% url 'logout' %}">Выйти</a></p>
       {% else %}

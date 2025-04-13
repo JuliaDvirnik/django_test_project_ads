@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Ad, ExchangeOffer
+from .models import Ad, ExchangeProposal
 
 admin.site.register(Ad)
-admin.site.register(ExchangeOffer)
+admin.site.register(ExchangeProposal)

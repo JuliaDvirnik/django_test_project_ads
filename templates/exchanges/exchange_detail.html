@@ -6,14 +6,22 @@
   <h2>Предложение обмена</h2>
 
   <p><strong>Ваше объявление:</strong>
-    <a href="{% url 'ad_detail' offer.ad_sender.pk %}">{{ offer.ad_sender.title }}</a>
+    <a href="{% url 'ad_detail' proposal.ad_sender.pk %}">{{ proposal.ad_sender.title }}</a>
   </p>
 
   <p><strong>Объявление получателя:</strong>
-    <a href="{% url 'ad_detail' offer.ad_receiver.pk %}">{{ offer.ad_receiver.title }}</a>
+    <a href="{% url 'ad_detail' proposal.ad_receiver.pk %}">{{ proposal.ad_receiver.title }}</a>
   </p>
 
-  <p><strong>Комментарий:</strong> {{ offer.comment }}</p>
-  <p><strong>Статус:</strong> {{ offer.get_status_display }}</p>
-  <p><em>Создано: {{ offer.created_at|date:"d.m.Y H:i" }}</em></p>
+  <p><strong>Комментарий:</strong> {{ proposal.comment }}</p>
+  <p><strong>Статус:</strong> {{ proposal.get_status_display }}</p>
+  <p><em>Создано: {{ proposal.created_at|date:"d.m.Y H:i" }}</em></p>
+    
+  {% if can_act %}
+    <form method="post">
+      {% csrf_token %}
+      <button name="action" value="accept">✅ Принять</button>
+      <button name="action" value="decline">❌ Отклонить</button>
+    </form>
+  {% endif %}  
 {% endblock %}

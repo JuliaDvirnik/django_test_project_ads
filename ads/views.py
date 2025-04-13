@@ -5,8 +5,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
-from .forms import AdForm, ExchangeOfferForm
-from .models import Ad, ExchangeOffer
+from .forms import AdForm, ExchangeProposalForm
+from .models import Ad, ExchangeProposal
 
 
 @login_required
@@ -18,10 +18,10 @@ def create_ad(request):
             ad.user = request.user
             ad.save()
             return redirect('ad_detail', pk=ad.pk)
+        return render(request, 'ads/ad_form.html', {'form': form}, status=400)
     else:
         form = AdForm()
     return render(request, 'ads/ad_form.html', {'form': form})
-# todo а что если форма не валидна? упадет?
 
 
 @login_required
@@ -29,15 +29,14 @@ def edit_ad(request, pk):
     ad = get_object_or_404(Ad, pk=pk)
     if ad.user != request.user:
         return HttpResponseForbidden("Вы не можете редактировать это объявление.")
-
     if request.method == 'POST':
         form = AdForm(request.POST, instance=ad)
         if form.is_valid():
             form.save()
             return redirect('ad_detail', pk=ad.pk)
+        return render(request, 'ads/ad_form.html', {'form': form, 'edit': True}, status=400)
     else:
         form = AdForm(instance=ad)
-
     return render(request, 'ads/ad_form.html', {'form': form, 'edit': True})
 
 
@@ -45,7 +44,7 @@ def edit_ad(request, pk):
 def delete_ad(request, pk):
     ad = get_object_or_404(Ad, pk=pk)
     if ad.user != request.user:
-        return HttpResponseForbidden("Вы не можете удалить это объявление.")
+        return HttpResponseForbidden("Вы не можете удалить чужое объявление.")
 
     if request.method == 'POST':
         ad.delete()
@@ -65,18 +64,24 @@ def create_exchange(request):
     if ad_sender_id:
         initial['ad_sender'] = ad_sender_id
 
-    if request.method == 'POST':
-        form = ExchangeOfferForm(request.POST)
-        if form.is_valid():
-            offer = form.save(commit=False)
-            offer.status = 'pending'
-            offer.save()
-            return redirect('exchange_detail', pk=offer.pk)
-    else:
-        form = ExchangeOfferForm(initial=initial)
-
     user_ads = Ad.objects.filter(user=request.user)
     all_ads = Ad.objects.exclude(user=request.user)
+
+    if request.method == 'POST':
+        form = ExchangeProposalForm(request.POST)
+        if form.is_valid():
+            proposal = form.save(commit=False)
+            proposal.status = 'pending'
+            proposal.save()
+            return redirect('exchange_detail', pk=proposal.pk)
+        render(request, 'exchanges/exchange_form.html', {
+            'form': form,
+            'user_ads': user_ads,
+            'all_ads': all_ads,
+        }, status=400)
+    else:
+        form = ExchangeProposalForm(initial=initial)
+
     return render(request, 'exchanges/exchange_form.html', {
         'form': form,
         'user_ads': user_ads,
@@ -86,8 +91,47 @@ def create_exchange(request):
 
 @login_required
 def exchange_detail(request, pk):
-    offer = get_object_or_404(ExchangeOffer, pk=pk)
-    return render(request, 'exchanges/exchange_detail.html', {'offer': offer})
+    proposal = get_object_or_404(ExchangeProposal, pk=pk)
+    is_receiver = proposal.ad_receiver.user == request.user
+    can_act = is_receiver and proposal.status == 'pending'
+
+    if request.method == 'POST' and can_act:
+        action = request.POST.get('action')
+        if action == 'accept':
+            proposal.status = 'accepted'
+        elif action == 'decline':
+            proposal.status = 'declined'
+        proposal.save()
+        return redirect('exchange_detail', pk=proposal.pk)
+
+    return render(request, 'exchanges/exchange_detail.html', {
+        'proposal': proposal,
+        'can_act': can_act,
+    })
+
+
+@login_required
+def my_exchanges(request):
+    status = request.GET.get('status', '')
+    role = request.GET.get('role', '')
+
+    proposals = ExchangeProposal.objects.filter(
+        Q(ad_sender__user=request.user) | Q(ad_receiver__user=request.user)
+    )
+
+    if status:
+        proposals = proposals.filter(status=status)
+    if role == 'sender':
+        proposals = proposals.filter(ad_sender__user=request.user)
+    elif role == 'receiver':
+        proposals = proposals.filter(ad_receiver__user=request.user)
+
+    return render(request, 'exchanges/my_exchanges.html', {
+        'proposals': proposals,
+        'status': status,
+        'role': role,
+        'status_choices': ExchangeProposal._meta.get_field('status').choices,
+    })
 
 
 def ad_detail(request, pk):
@@ -101,11 +145,11 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('login')
+            return redirect('index')
+        return render(request, 'registration/register.html', {'form': form}, status=400)
     else:
         form = UserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
-# todo а что если форма не валидна? упадет?
 
 
 def ad_list(request):

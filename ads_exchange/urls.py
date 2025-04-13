@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path
-from ads.views import create_ad, ad_detail, register, ad_list, delete_ad, edit_ad, create_exchange, exchange_detail
+from ads.views import create_ad, ad_detail, register, ad_list, delete_ad, edit_ad, create_exchange, exchange_detail, my_exchanges
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +30,5 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('exchange/', create_exchange, name='create_exchange'),
     path('exchange/<int:pk>/', exchange_detail, name='exchange_detail'),
+    path('my-exchanges/', my_exchanges, name='my_exchanges'),
 ]
-
-# спросить должен ли быть свой файл urls в app

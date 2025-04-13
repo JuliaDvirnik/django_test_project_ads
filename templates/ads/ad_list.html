@@ -3,12 +3,17 @@
 {% block title %}Объявления{% endblock %}
 
 {% block content %}
-  <h2>Добро пожаловать!</h2>
+  <h2>
+  Добро пожаловать{% if user.is_authenticated %}, {{ user.username }}! <a href="{% url 'logout' %}">🔓 Выйти</a>{% else %}!
+  {% endif %}
+</h2>
 
   {% if user.is_authenticated %}
-    <p><a href="{% url 'create_ad' %}">➕ Подать объявление</a></p>
-    <p><a href="{% url 'create_exchange' %}">🔁 Обменять</a></p>  
-    <p><a href="{% url 'logout' %}">🔓 Выйти</a></p>
+    <div style="display: flex; gap: 10px; margin-bottom: 1em;">
+      <a href="{% url 'create_ad' %}" style="padding: 8px 16px; background-color: #0366d6; color: white; border-radius: 5px; text-decoration: none;">➕ Подать объявление</a>
+      <a href="{% url 'my_exchanges' %}" style="padding: 8px 16px; background-color: #28a745; color: white; border-radius: 5px; text-decoration: none;">📄 Мои обмены</a>
+      <a href="{% url 'create_exchange' %}" style="padding: 8px 16px; background-color: #6f42c1; color: white; border-radius: 5px; text-decoration: none;">🔁 Обменять</a>
+    </div>
   {% else %}
     <p><a href="{% url 'login' %}">🔐 Войти</a> или <a href="{% url 'register' %}">📝 Зарегистрироваться</a></p>
   {% endif %}
